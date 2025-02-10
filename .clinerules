@@ -1,0 +1,107 @@
+# Root Clinerules Configuration
+
+## Rules action notice
+Every time you choose to apply a rule(s), explicitly state the rule(s) in the output.
+You can abbreviate the rule description to a single word or phrase.
+
+## Rule Selection Strategy
+
+- Rules are organized hierarchically with root rules applying globally
+- Context-specific rules are loaded from `.clinerules.d/` directory
+- Rules are selected based on:
+  - Project type (web, mobile, cli, etc.)
+  - Tech stack (React, Node, Python, etc.)
+  - Task type (development, testing, deployment)
+
+## Base Rules
+
+These rules apply to all projects/tasks:
+
+```yaml
+base_rules:
+  - always_use_tools: true
+  - confirm_success: true
+  - iterative_approach: true
+  - tool_use_format: xml
+```
+
+## Context Detection
+
+```yaml
+context_detection:
+  project_type:
+    web:
+      - look_for: package.json
+      - rules: .clinerules.d/web/.clinerules
+    cli:
+      - look_for: setup.py | Cargo.toml
+      - rules: .clinerules.d/cli/.clinerules
+  tech_stack:
+    hugo:
+      - look_for: [hugo.toml, hugo.yml, config/hugo.toml,  hugo.yml, taxonomies.yml]
+      - rules: .clinerules.d/hugo/.clinerules
+    react:
+      - look_for: react in package.json
+      - rules: .clinerules.d/react/.clinerules
+    node:
+      - look_for: node_modules
+      - rules: .clinerules.d/node/.clinerules
+    tailwind:
+      - look_for: tailwind.config
+      - rules: .clinerules.d/tailwind/.clinerules
+
+```
+
+## Rule Application
+
+```yaml
+rule_application:
+  priority:
+    - project_type
+    - tech_stack
+    - task_type
+  fallback: base_rules
+```
+
+## Directory Structure
+
+```markdown
+.clinerules.d/
+├── web/
+│   └── .clinerules
+├── cli/
+│   └── .clinerules
+├── react/
+│   └── .clinerules
+├── node/
+│   └── .clinerules
+└── task_types/
+    ├── development/
+    │   └── .clinerules
+    ├── testing/
+    │   └── .clinerules
+    └── deployment/
+        └── .clinerules
+```
+
+## Example Nested Rule File (web/.clinerules)
+
+```markdown
+# Web Project Rules
+
+## Frontend Development
+- Use React best practices
+- Follow component-based architecture
+- Implement responsive design
+
+## Backend Development
+- REST API standards
+- Authentication patterns
+- Database integration
+```
+
+## Rule Inheritance
+
+- Nested rules inherit from parent rules
+- More specific rules override general rules
+- Conflicts are resolved by priority order
